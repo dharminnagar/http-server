@@ -6,13 +6,16 @@ use std::{
     net::{TcpListener, TcpStream}, 
 };
 
+use http_server::ThreadPool;
+
 fn main() {
     let server = TcpListener::bind("127.0.0.1:3000").unwrap();
+    let pool = ThreadPool::new(4);
 
     for server_stream in server.incoming() {
         let server_stream = server_stream.unwrap();
 
-        thread::spawn(|| {
+        pool.execute(|| {
             handle_request(server_stream)
         });
     }
