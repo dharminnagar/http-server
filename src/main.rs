@@ -25,13 +25,6 @@ fn main() {
 
         let request_route = reader.lines().next().unwrap().unwrap();
 
-        // let (status_line, file) = if request_route == "GET / HTTP/1.1" {
-        //     ("HTTP/1.1 200 OK", "public/response.html")
-        // } else {
-        //     ("HTTP/1.1 404 NOT FOUND", "public/404.html")
-        // };
-        // Restructure this to match{} format
-
         let (status_line, file) = match request_route.as_str() {
             "GET / HTTP/1.1" => ("HTTP/1.1 200 OK", "public/response.html"),
             "GET /sleep HTTP/1.1" => {
