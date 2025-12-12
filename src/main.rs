@@ -17,27 +17,18 @@ fn main() {
         let reader = BufReader::new(&stream);
 
         let request_route = reader.lines().next().unwrap().unwrap();
-        // let _http_request: Vec<_> = reader
-        //     .lines()
-        //     .map(|result| result.unwrap())
-        //     .take_while(|line| !line.is_empty())
-        //     .collect();
 
-        if request_route == "GET / HTTP/1.1" {
-            let status_line = "HTTP/1.1 200 OK\r\n\r\n";
-            let contents = fs::read_to_string("public/response.html").unwrap();
-            
-            let response = format!("{status_line} {contents}");
-            
-            stream.write_all(response.as_bytes()).unwrap();
+        let (status_line, file) = if request_route == "GET / HTTP/1.1" {
+            ("HTTP/1.1 200 OK", "public/response.html")
         } else {
-            let status_line = "HTTP/1.1 404 NOT FOUND\r\n\r\n";
-            let contents = fs::read_to_string("public/404.html").unwrap();
+            ("HTTP/1.1 404 NOT FOUND", "public/404.html")
+        };
 
-            let response = format!("{status_line} {contents}");
+        let contents = fs::read_to_string(file).unwrap();
+        let length = contents.len();
+        let response = format!("{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}");
 
-            stream.write_all(response.as_bytes()).unwrap();
-        }
+        stream.write_all(response.as_bytes()).unwrap();
     }
 
 }
