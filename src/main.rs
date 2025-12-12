@@ -1,5 +1,9 @@
 use std::{
-    fs, io::{BufReader, prelude::*}, net::{TcpListener, TcpStream}, thread, time::Duration
+    fs, 
+    thread, 
+    time::Duration,
+    io::{BufReader, prelude::*}, 
+    net::{TcpListener, TcpStream}, 
 };
 
 fn main() {
@@ -8,7 +12,9 @@ fn main() {
     for server_stream in server.incoming() {
         let server_stream = server_stream.unwrap();
 
-        handle_request(server_stream);
+        thread::spawn(|| {
+            handle_request(server_stream)
+        });
     }
 
     fn handle_request(mut stream: TcpStream) {
